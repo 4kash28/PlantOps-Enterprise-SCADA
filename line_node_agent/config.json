@@ -1,0 +1,24 @@
+{
+  "server_ip": "127.0.0.1",
+  "server_port": 8090,
+  "station_id": "LINE1_STATION_06",
+  "station_name": "RAC Packaging & Labeling",
+  "sync_interval_sec": 3,
+  "ping_timeout_ms": 1000,
+  "prompt_permissions_on_startup": true,
+  "permissions": {
+    "cpu": true,
+    "ram": true,
+    "disk": true,
+    "network": true,
+    "uptime": true,
+    "zebra": false,
+    "allow_remote_stop": true
+  },
+  "printer_monitoring": {
+    "enabled": false,
+    "zebra_vid": "0A5F",
+    "name_pattern": "ZT411"
+  },
+  "log_level": "INFO"
+}

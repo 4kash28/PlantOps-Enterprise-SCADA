@@ -1,0 +1,189 @@
+<Window x:Class="DotNetApp.Views.TroubleshootingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Workstation Priority &amp; Action Center — PlantOps™ SCADA"
+        Height="680" Width="1120"
+        MinWidth="880" MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Background="{Binding CanvasBg}"
+        Foreground="{Binding TextMain}"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 0: Header Strip -->
+            <RowDefinition Height="Auto"/>
+            <!-- 1: Summary Bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- 2: Action List -->
+            <RowDefinition Height="*"/>
+            <!-- 3: Footer Status -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ============================================================== -->
+        <!-- ROW 0: TOP CORPORATE HEADER STRIP                               -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="0" Background="{Binding HeaderBg}" BorderBrush="{Binding HeaderBorder}" BorderThickness="0,0,0,1" Padding="20,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: Title & Subtitle -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Alert / Shield Icon -->
+                        <Border Width="34" Height="34" CornerRadius="6" Background="#fef2f2" BorderBrush="#fca5a5" BorderThickness="1" Margin="0,0,12,0">
+                            <Viewbox Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Path Data="M12,2L1,21H23L12,2M12,6L19.53,19H4.47L12,6M11,10V14H13V10H11M11,16V18H13V16H11Z" Fill="#dc2626"/>
+                            </Viewbox>
+                        </Border>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="SYSTEM PRIORITY &amp; ACTION CENTER" FontWeight="Bold" FontSize="15" Foreground="{Binding HeaderFg}"/>
+                            <TextBlock Text="Workstation priority ranking — identify systems requiring immediate operator action" 
+                                       FontSize="11" Foreground="{Binding HeaderSubFg}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Right: Action Buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Click="OnRefresh_Click" Height="32" Padding="14,4" Margin="0,0,10,0"
+                            Background="{Binding HeaderBtnBg}" Foreground="{Binding HeaderBtnFg}" BorderBrush="{Binding HeaderBtnBorder}" BorderThickness="1"
+                            FontWeight="SemiBold" FontSize="11" Cursor="Hand" ToolTip="Refresh workstation telemetry">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Viewbox Width="11" Height="11" Margin="0,0,6,0" VerticalAlignment="Center">
+                                <Path Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" Fill="{Binding HeaderBtnFg}"/>
+                            </Viewbox>
+                            <TextBlock Text="Refresh Telemetry"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Click="OnClose_Click" Height="32" Padding="14,4"
+                            Background="#e2e8f0" Foreground="#1e293b" BorderThickness="0"
+                            FontWeight="Bold" FontSize="11" Cursor="Hand">
+                        <TextBlock Text="Close Window"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ============================================================== -->
+        <!-- ROW 1: STATUS BAR METRICS STRIP                                -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="1" Background="{Binding SubHeaderBg}" BorderBrush="{Binding SubHeaderBorder}" BorderThickness="0,0,0,1" Padding="20,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Background="#2563eb" CornerRadius="3" Padding="10,4" Margin="0,0,8,0">
+                    <TextBlock Text="{Binding TotalStations, StringFormat='Total Systems: {0}'}" FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="Consolas"/>
+                </Border>
+                <Border Background="#dc2626" CornerRadius="3" Padding="10,4" Margin="0,0,8,0">
+                    <TextBlock Text="{Binding HighPriorityCount, StringFormat='🔴 High Priority: {0}'}" FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="Consolas"/>
+                </Border>
+                <Border Background="#d97706" CornerRadius="3" Padding="10,4" Margin="0,0,8,0">
+                    <TextBlock Text="{Binding MediumPriorityCount, StringFormat='🟡 Medium Priority: {0}'}" FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="Consolas"/>
+                </Border>
+                <Border Background="#16a34a" CornerRadius="3" Padding="10,4">
+                    <TextBlock Text="{Binding NominalCount, StringFormat='🟢 Safe (No Action): {0}'}" FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="Consolas"/>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- ============================================================== -->
+        <!-- ROW 2: MAIN PRIORITY & ACTION LIST                            -->
+        <!-- ============================================================== -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="20,16">
+            <StackPanel>
+
+                <!-- CASE A: SYSTEMS NEEDING ACTION -->
+                <ItemsControl ItemsSource="{Binding ActionRequiredStations}" Visibility="{Binding HasTroubleshootingRequired, Converter={StaticResource BoolToVis}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,0,0,12" Padding="20,16" CornerRadius="6"
+                                    Background="#ffffff" BorderBrush="{Binding PriorityCardBorder}" BorderThickness="2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <!-- Col 0: System Name -->
+                                        <ColumnDefinition Width="280"/>
+                                        <!-- Col 1: Reason / Issue -->
+                                        <ColumnDefinition Width="*"/>
+                                        <!-- Col 2: Priority Badge -->
+                                        <ColumnDefinition Width="170"/>
+                                        <!-- Col 3: Action Tag -->
+                                        <ColumnDefinition Width="220"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Workstation Name & Identity -->
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding StationName}" FontSize="18" FontWeight="Black" Foreground="#0f172a" TextTrimming="CharacterEllipsis"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                            <Border Background="#f1f5f9" CornerRadius="3" Padding="6,2" Margin="0,0,6,0">
+                                                <TextBlock Text="{Binding StationId, StringFormat='Node: {0}'}" FontSize="10" FontWeight="Bold" Foreground="#475569" FontFamily="Consolas"/>
+                                            </Border>
+                                            <Border Background="{Binding StatusBadgeBg}" CornerRadius="3" Padding="6,2">
+                                                <TextBlock Text="{Binding StatusText}" FontSize="10" FontWeight="Bold" Foreground="{Binding StatusBadgeFg}"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Issue Reason -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0">
+                                        <TextBlock Text="DETECTED ISSUE:" FontSize="9" FontWeight="Black" Foreground="#64748b" FontFamily="Consolas"/>
+                                        <TextBlock Text="{Binding ShortIssueText}" FontSize="13" FontWeight="Bold" Foreground="#1e293b" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <!-- Priority Level -->
+                                    <Border Grid.Column="2" Background="{Binding PriorityBadgeBg}" CornerRadius="4" Padding="12,7" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding PriorityLevelText}" FontSize="11" FontWeight="Black" Foreground="{Binding PriorityBadgeFg}" FontFamily="Segoe UI"/>
+                                    </Border>
+
+                                    <!-- Action Lo Status -->
+                                    <Border Grid.Column="3" Background="{Binding ActionBadgeBg}" CornerRadius="4" Padding="14,8" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding ActionRequiredText}" FontSize="11" FontWeight="Black" Foreground="{Binding ActionBadgeFg}" FontFamily="Segoe UI"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- CASE B: ALL SYSTEMS SAFE (NO ACTION NEEDED) -->
+                <Border Background="#f0fdf4" BorderBrush="#86efac" BorderThickness="2" CornerRadius="8" Padding="32" Margin="0,20,0,0"
+                        Visibility="{Binding IsAllSystemsNominal, Converter={StaticResource BoolToVis}}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Width="64" Height="64" Background="#dcfce7" CornerRadius="32" HorizontalAlignment="Center" Margin="0,0,0,16">
+                            <Viewbox Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Path Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z" Fill="#16a34a"/>
+                            </Viewbox>
+                        </Border>
+                        <TextBlock Text="ALL SYSTEMS NOMINAL (NO ACTION REQUIRED)" FontSize="18" FontWeight="Black" Foreground="#15803d" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Every connected workstation on the assembly line is operating healthy within safety thresholds." FontSize="12" Foreground="#166534" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        <TextBlock Text="Zero systems require operator intervention, maintenance, or troubleshooting." FontSize="11" Foreground="#4ade80" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ============================================================== -->
+        <!-- ROW 3: FIXED BOTTOM STATUS BAR                                -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="3" Background="{Binding HeaderBg}" BorderBrush="{Binding HeaderBorder}" BorderThickness="0,1,0,0" Padding="20,8">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Rectangle Width="6" Height="6" Fill="#10b981" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="PlantOps™ Industrial Priority &amp; Watchdog Engine Active" FontWeight="Bold" FontSize="10" Foreground="#15803d"/>
+                    <TextBlock Text="|" Foreground="{Binding HeaderSubFg}" Margin="8,0"/>
+                    <TextBlock Text="Live Action Monitor" FontSize="10" Foreground="{Binding HeaderSubFg}"/>
+                </StackPanel>
+                <Button Content="Close" Width="80" Height="26" HorizontalAlignment="Right" Background="{Binding HeaderBtnBg}" Foreground="{Binding HeaderBtnFg}" BorderBrush="{Binding HeaderBtnBorder}" BorderThickness="1" Cursor="Hand" Click="OnClose_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

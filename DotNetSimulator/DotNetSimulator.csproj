@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>LineSimulator</AssemblyName>
+    <Product>PlantOps™ RAC Line Workstation Simulator</Product>
+    <Version>2.4.0</Version>
+    <Authors>PlantOps RAC Systems</Authors>
+    <Company>PlantOps Industrial SCADA</Company>
+  </PropertyGroup>
+
+</Project>

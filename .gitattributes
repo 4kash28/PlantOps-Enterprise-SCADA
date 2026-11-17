@@ -1,0 +1,25 @@
+# Auto-detect text files and perform LF normalization on checkout
+* text=auto
+
+# Source code (Normalize to CRLF on Windows for WPF / XAML)
+*.cs text eol=crlf diff=csharp
+*.xaml text eol=crlf
+*.csproj text eol=crlf
+*.sln text eol=crlf
+*.manifest text eol=crlf
+*.config text eol=crlf
+*.json text eol=crlf
+*.xml text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Documentation & Markdown
+*.md text eol=crlf
+*.txt text eol=crlf
+
+# Binary assets
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary

@@ -1,0 +1,7 @@
+{
+  "ServerIp": "127.0.0.1",
+  "ServerPort": 8090,
+  "StationId": "STATION_AKASHR-SUPA",
+  "StationName": "RAC Assembly Line Node (AKASHR-SUPA)",
+  "SyncIntervalSec": 3
+}

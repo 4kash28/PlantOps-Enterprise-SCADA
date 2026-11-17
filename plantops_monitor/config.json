@@ -1,0 +1,25 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8090,
+    "dashboard_title": "PlantOps Enterprise SCADA"
+  },
+  "thresholds": {
+    "heartbeat_timeout_sec": 10,
+    "cpu_warning_pct": 85.0,
+    "ram_warning_pct": 85.0,
+    "ping_warning_ms": 50.0,
+    "ping_critical_ms": 200.0
+  },
+  "stations": [],
+  "network_profile": {
+    "ip": "192.168.19.170",
+    "subnet_mask": "255.255.255.0",
+    "gateway": "192.168.19.1",
+    "port": 8090,
+    "subnet_cidr": "192.168.19.0/24",
+    "enforce_subnet": true,
+    "prompt_on_startup": true,
+    "configured_at": "2026-11-13T06:43:26.931897+00:00"
+  }
+}

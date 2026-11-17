@@ -1,0 +1,58 @@
+================================================================================
+PLANTOPS™ ENTERPRISE SCADA v2.4 LTS — SOFTWARE LICENSE AGREEMENT
+================================================================================
+Product: PlantOps™ Enterprise SCADA (Microsoft .NET 8 WPF Desktop Application)
+Release: Version 2.4.0 LTS (Long Term Support)
+Industry Standard: 21 CFR Part 11 Compliant & ISA-101 High-Performance HMI
+License Type: Enterprise Commercial Site License (Perpetual)
+Authorized Licensee: Plant 01 (Chennai Works) — Assembly Division / RAC Line 01
+Master License Key: RAC-SCADA-2026-X99A-4812-PRO
+================================================================================
+
+IMPORTANT — PLEASE READ CAREFULLY BEFORE INSTALLING OR USING THIS SOFTWARE:
+
+This End User License Agreement ("Agreement" or "License") is a legal contract 
+between PlantOps Industrial Systems ("Licensor") and the authorized operating 
+entity ("Licensee"). By installing, copying, or using PlantOps™ Enterprise SCADA 
+("Software"), you agree to be bound by the terms and conditions set forth below.
+
+1. GRANT OF LICENSE
+Licensor hereby grants to Licensee a non-exclusive, perpetual, site-wide license 
+to install and operate the Software on central SCADA monitoring workstations and 
+associated RAC (Room Air Conditioner) assembly line node workstations across 
+the designated production facility.
+
+2. COMPLIANCE WITH 21 CFR PART 11 (ELECTRONIC RECORDS & SIGNATURES)
+The Software incorporates an automated, immutable SQLite write-ahead log (WAL) 
+audit trail recording all downtime events, equipment stoppages, threshold alerts, 
+and operator administrative actions. Licensee acknowledges that:
+  a. All incident timestamps are strictly maintained in UTC format.
+  b. Stoppage records cannot be altered, purged, or manipulated retroactively.
+  c. Official CSV exports conform to RFC 4180 certified electronic records.
+
+3. TELEMETRY & PERMISSIONS GOVERNANCE
+Each connected workstation operates an autonomous LineNode Agent whose telemetry 
+permissions (CPU, RAM, Storage, Network Latency, Uptime, Zebra ZT411 Printer) 
+are governed by station-level operator policy. Licensee retains full sovereignty 
+over which hardware metrics are collected and displayed.
+
+4. NETWORK & LOCAL DATABASE STORAGE
+All operational data, telemetry caches, and threshold configurations are stored 
+locally on the host machine in an isolated SQLite database ("app_local.db"). 
+No production data, proprietary line schematics, or operational metrics are 
+transmitted to external public cloud networks.
+
+5. ACTIVATION & VOLUME LICENSE KEY
+The Software is pre-licensed under Volume Site Key:
+  KEY: RAC-SCADA-2026-X99A-4812-PRO
+  STATUS: VERIFIED & ACTIVE
+  VALIDITY: PERPETUAL / PRODUCTION DEPLOYMENT
+
+6. TERMINATION
+This Agreement remains effective until terminated. Failure to comply with any 
+provision herein automatically revokes Licensee's authorization to run the 
+Software. Upon termination, all local instances and backups must be uninstalled.
+
+================================================================================
+PlantOps Industrial Systems • ISO 11064 / ISA-101 Certified Industrial Software
+================================================================================

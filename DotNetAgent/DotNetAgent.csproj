@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>LineNodeAgent</AssemblyName>
+    <ApplicationIcon>linenode_agent.ico</ApplicationIcon>
+    <Product>PlantOps™ Line Node Telemetry Agent</Product>
+    <Version>2.4.0</Version>
+    <Authors>PlantOps RAC Systems</Authors>
+    <Company>PlantOps Industrial SCADA</Company>
+    <Description>RAC Workstation Telemetry Agent &amp; Data Permission Controller (C# .NET 8 WPF)</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="linenode_agent.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

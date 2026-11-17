@@ -1,0 +1,83 @@
+## ====================================================================
+## PlantOps™ Industrial SCADA — Git Ignore Configuration
+## ====================================================================
+
+# Build output directories (Compiler generated)
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+build/
+dist/
+*/build/
+*/dist/
+Release_ScadaDashboard/
+Release_LineNodeAgent/
+Release_Simulator/
+DEPLOY_PACKAGES/
+installers/
+
+# Large Binaries, Assemblies & Distribution Archives
+# Note: Release binaries (130MB+) should be published via GitHub Releases, not in git history.
+*.exe
+*.dll
+*.so
+*.dylib
+*.pdb
+*.zip
+*.tar.gz
+*.7z
+
+# Visual Studio & IDE Caches
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.DotSettings.user
+
+# SQLite Databases & Transaction Logs (Generated at runtime)
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+!sample_*.db
+
+# Local Deployment Activation Manifests (Generated at installation time)
+license_activation.json
+agent_installed.json
+
+# Temporary / Log files
+*.log
+app_error.log
+agent_error.log
+err.txt
+out.txt
+stderr.txt
+stdout.txt
+*.tmp
+*.bak
+
+# Python byte-code & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# OS Generated Files
+[Tt]humbs.db
+[Ee]hthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Re-include critical icons and images needed for building
+!*.ico
+!*.png
+!*.jpg
+!*.svg

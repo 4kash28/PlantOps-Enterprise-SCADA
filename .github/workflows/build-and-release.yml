@@ -1,0 +1,94 @@
+name: Build and Release PlantOps SCADA
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Package (.NET 8 Win-x64)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore Dependencies
+        run: dotnet restore PlantOps_Enterprise_SCADA.sln
+
+      - name: Build Solution (Release)
+        run: dotnet build PlantOps_Enterprise_SCADA.sln -c Release --no-restore
+
+      - name: Publish SCADA Server (Win-x64 Single-File)
+        run: |
+          dotnet publish DotNetApp/DotNetApp.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/scada
+
+      - name: Publish Line Node Agent (Win-x64 Single-File)
+        run: |
+          dotnet publish LineNodeAgent/LineNodeAgent.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/agent
+
+      - name: Prepare Release Distribution Package
+        shell: pwsh
+        run: |
+          $dist = "publish/PlantOps_RAC_Enterprise_Software"
+          New-Item -ItemType Directory -Path $dist -Force | Out-Null
+          
+          Copy-Item "publish/scada/PlantOpsEnterpriseSCADA.exe" -Destination "$dist/PlantOpsEnterpriseSCADA.exe" -Force
+          Copy-Item "publish/agent/LineNodeAgent.exe" -Destination "$dist/LineNodeAgent.exe" -Force
+          
+          if (Test-Path "WINDOWS_INSTALLERS/ALLOW_FIREWALL_LAN_ACCESS.bat") {
+              Copy-Item "WINDOWS_INSTALLERS/ALLOW_FIREWALL_LAN_ACCESS.bat" -Destination "$dist/" -Force
+          }
+          if (Test-Path "WINDOWS_INSTALLERS/Uninstall.bat") {
+              Copy-Item "WINDOWS_INSTALLERS/Uninstall.bat" -Destination "$dist/" -Force
+          }
+          if (Test-Path "WINDOWS_INSTALLERS/Uninstall_LineNodeAgent.bat") {
+              Copy-Item "WINDOWS_INSTALLERS/Uninstall_LineNodeAgent.bat" -Destination "$dist/" -Force
+          }
+          if (Test-Path "README_INSTALLATION_GUIDE.md") {
+              Copy-Item "README_INSTALLATION_GUIDE.md" -Destination "$dist/" -Force
+          }
+          if (Test-Path "LICENSE.txt") {
+              Copy-Item "LICENSE.txt" -Destination "$dist/LICENSE_KEY.txt" -Force
+          }
+          if (Test-Path "plantops_monitor.ico") {
+              Copy-Item "plantops_monitor.ico" -Destination "$dist/" -Force
+          }
+          if (Test-Path "linenode_agent.ico") {
+              Copy-Item "linenode_agent.ico" -Destination "$dist/" -Force
+          }
+          if (Test-Path "plantops_monitor.png") {
+              Copy-Item "plantops_monitor.png" -Destination "$dist/" -Force
+          }
+          if (Test-Path "linenode_agent.png") {
+              Copy-Item "linenode_agent.png" -Destination "$dist/" -Force
+          }
+          
+          Compress-Archive -Path "$dist/*" -DestinationPath "publish/PlantOps_RAC_Enterprise_Software_v2.4.zip" -Force
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlantOps_RAC_Enterprise_Software_v2.4
+          path: publish/PlantOps_RAC_Enterprise_Software_v2.4.zip
+
+      - name: Publish GitHub Release (On Tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: publish/PlantOps_RAC_Enterprise_Software_v2.4.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true

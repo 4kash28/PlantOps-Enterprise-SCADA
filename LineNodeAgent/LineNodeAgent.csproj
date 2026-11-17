@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>LineNodeAgent</AssemblyName>
+    <ApplicationIcon>linenode_agent.ico</ApplicationIcon>
+    <Product>PlantOps™ Line Node Agent</Product>
+    <Version>2.4.0</Version>
+    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <FileVersion>2.4.0.0</FileVersion>
+    <Authors>PlantOps Industrial Automation Solutions</Authors>
+    <Company>PlantOps Industrial Automation Solutions</Company>
+    <Description>PlantOps™ Workstation Line Node Agent &amp; Industrial Telemetry Client</Description>
+    <Copyright>Copyright © 2026 PlantOps Industrial Automation Solutions. All rights reserved.</Copyright>
+    <AssemblyTitle>PlantOps™ Line Node Agent</AssemblyTitle>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="linenode_agent.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Resource Include="linenode_agent.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

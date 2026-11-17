@@ -1,0 +1,481 @@
+<Window x:Class="LineNodeAgent.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:LineNodeAgent.ViewModels"
+        Title="PlantOps™ Line Node Agent — Workstation Monitor"
+        Height="800" Width="1200"
+        MinHeight="700" MinWidth="1040"
+        WindowStartupLocation="CenterScreen"
+        Background="{Binding CanvasBg}"
+        Foreground="{Binding TextMain}"
+        FontFamily="Segoe UI Variable, Segoe UI, -apple-system, Arial"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <!-- Microsoft Fluent Accent Primary Button -->
+        <Style x:Key="BtnPrimary" TargetType="Button">
+            <Setter Property="Background" Value="#0067c0"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="BorderBrush" Value="#005fb8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16,7"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1075cc"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#e2e8f0"/>
+                    <Setter Property="BorderBrush" Value="#cbd5e1"/>
+                    <Setter Property="Foreground" Value="#94a3b8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Microsoft Fluent Secondary Button -->
+        <Style x:Key="BtnSecondary" TargetType="Button">
+            <Setter Property="Background" Value="{Binding HeaderBtnBg, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="Foreground" Value="{Binding HeaderBtnFg, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderBrush" Value="{Binding HeaderBtnBorder, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="13,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Fluent Elevated Card Style -->
+        <Style x:Key="FluentCard" TargetType="Border">
+            <Setter Property="Background" Value="{Binding SurfaceBg, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderBrush" Value="{Binding CardBorder, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20,18"/>
+        </Style>
+
+        <!-- Modern Filter Chip Button -->
+        <Style x:Key="FilterChip" TargetType="Button">
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Padding" Value="11,3"/>
+            <Setter Property="FontSize" Value="10.5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="{Binding HeaderBtnBg, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="Foreground" Value="{Binding TextMuted, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderBrush" Value="{Binding HeaderBtnBorder, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="13"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{Binding TextMain, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                    <Setter Property="BorderBrush" Value="#0078d4"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Fluent Form Input TextBox Style (Zero Clipping, Crisp Typography) -->
+        <Style x:Key="FluentTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Background" Value="{Binding InputBg, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="Foreground" Value="{Binding InputFg, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderBrush" Value="{Binding InputBorder, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="UseLayoutRounding" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Disabled"
+                                          VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#0078d4"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Sensor Row Card Style -->
+        <Style x:Key="SensorRowCard" TargetType="Border">
+            <Setter Property="Background" Value="{Binding SurfaceBg, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderBrush" Value="{Binding CardBorder, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="14,11"/>
+            <Setter Property="Margin" Value="0,0,0,7"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#93c5fd"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 0: Fluent Top Navigation Bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- 1: Spacious 2-Column Dashboard Body -->
+            <RowDefinition Height="*"/>
+            <!-- 2: Clean Footer Status Bar -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ============================================================== -->
+        <!-- ROW 0: CLEAN MICROSOFT .NET FLUENT HEADER                       -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="0" Background="{Binding HeaderBg}" BorderBrush="{Binding HeaderBorder}" BorderThickness="0,0,0,1" Padding="24,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: App Identity & Badges -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource BtnSecondary}" Click="OnAboutBtn_Click" ToolTip="Click for Workstation Diagnostics &amp; Compliance (21 CFR Part 11)" Padding="4,4,8,4">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="34" Height="34" CornerRadius="8" Margin="0,0,10,0" ClipToBounds="True">
+                                <Image Source="/linenode_agent.png" Width="34" Height="34" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="PlantOps™ Line Node Agent" FontWeight="Bold" FontSize="14" Foreground="{Binding HeaderFg}"/>
+                                    <Border Background="#eff6ff" BorderBrush="#bfdbfe" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text=".NET 8 LTS" FontSize="9.5" FontWeight="Bold" Foreground="#1d4ed8" FontFamily="Consolas"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="Shop-Floor Assembly Workstation Gateway • 21 CFR Part 11 Compliant" FontSize="10" Foreground="{Binding TextMuted}" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Center: Connection State Pill -->
+                <Border Grid.Column="1" HorizontalAlignment="Center" Background="{Binding CanvasBg}" CornerRadius="16" BorderBrush="{Binding CardBorder}" BorderThickness="1" Padding="14,6" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Fill="{Binding StreamStatusColor}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding StreamStatus}" FontWeight="Bold" FontSize="10" Foreground="{Binding StreamStatusColor}" Margin="0,0,8,0" FontFamily="Consolas"/>
+                        <TextBlock Text="•" Foreground="{Binding TextMuted}" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding Settings.ServerUrl}" FontSize="10" Foreground="{Binding TextMuted}" FontFamily="Consolas"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Right: Header Controls -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="ℹ️ About" Height="32" Margin="0,0,8,0" Style="{StaticResource BtnSecondary}" Click="OnAboutBtn_Click" ToolTip="Workstation Diagnostics &amp; Standards Compliance"/>
+                    <Button Content="{Binding ThemeToggleLabel}" Height="32" Margin="0,0,8,0" Style="{StaticResource BtnSecondary}" Click="OnToggleTheme_Click" ToolTip="Toggle Light / Dark Theme"/>
+                    <Button Content="─ Minimize to Tray" Height="32" Margin="0,0,8,0" Style="{StaticResource BtnSecondary}" Click="OnMinimizeTray_Click" ToolTip="Minimize to Windows System Tray (Runs 24/7 in Background)"/>
+                    <Button Content="📡 Test SCADA Link" Height="32" Style="{StaticResource BtnPrimary}" Click="OnTestLink_Click" ToolTip="Test Connection to Central SCADA Server"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ============================================================== -->
+        <!-- ROW 1: SPACIOUS TWO-COLUMN DASHBOARD BODY                      -->
+        <!-- ============================================================== -->
+        <Grid Grid.Row="1" Margin="24,18">
+            <Grid.ColumnDefinitions>
+                <!-- Left: Hardware Sensors (Clean, Modern Governance List) -->
+                <ColumnDefinition Width="600"/>
+                <!-- Right: Identity Settings & Live Telemetry Stream -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ============================================================== -->
+            <!-- LEFT COLUMN: HARDWARE SENSORS & TELEMETRY GOVERNANCE CARD      -->
+            <!-- ============================================================== -->
+            <Border Grid.Column="0" Style="{StaticResource FluentCard}" Margin="0,0,16,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <!-- 0: Card Header -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- 1: Filter & Quick Presets -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- 2: Clean Sensor Cards List -->
+                        <RowDefinition Height="*"/>
+                        <!-- 3: Save Button -->
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 0: Card Header & Permitted Counter -->
+                    <Grid Grid.Row="0" Margin="0,0,0,12">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="⚙ Hardware Sensors &amp; Governance" FontWeight="Bold" FontSize="14" Foreground="{Binding TextMain}"/>
+                        </StackPanel>
+                        <Border HorizontalAlignment="Right" Background="#ecfdf5" BorderBrush="#a7f3d0" BorderThickness="1" CornerRadius="12" Padding="10,3" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding EnabledSummaryText}" FontSize="10" FontWeight="Bold" Foreground="#047857" FontFamily="Consolas"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- Row 1: Search & Filter Presets Bar -->
+                    <Grid Grid.Row="1" Margin="0,0,0,12">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Search Input -->
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <TextBox Style="{StaticResource FluentTextBox}" Text="{Binding SearchFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="32,0,10,0"/>
+                            <TextBlock Text="🔍" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" IsHitTestVisible="False"/>
+                            <Button Content="✕" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,8,0" Background="Transparent" BorderThickness="0" Foreground="{Binding TextMuted}" Cursor="Hand" Click="OnClearSearch_Click" ToolTip="Clear Filter"/>
+                        </Grid>
+
+                        <!-- Quick Presets Chips -->
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="✓ All Sensors" Style="{StaticResource FilterChip}" Margin="0,0,5,0" Click="OnEnableAll_Click" ToolTip="Enable All Sensors"/>
+                            <Button Content="⚡ Hardware Only" Style="{StaticResource FilterChip}" Margin="0,0,5,0" Click="OnHardwareOnly_Click" ToolTip="Enable Core Hardware Only"/>
+                            <Button Content="🛡 Minimal Safe" Style="{StaticResource FilterChip}" Margin="0,0,5,0" Click="OnMinimal_Click" ToolTip="Enable Minimal Telemetry"/>
+                            <Button Content="✕ Disable All" Style="{StaticResource FilterChip}" Click="OnDisableAll_Click" ToolTip="Disable All Telemetry"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Row 2: Sensor Cards Scrollable List (Uncongested, Modern Fluent Tiles) -->
+                    <Border Grid.Row="2" Background="{Binding InputBg}" BorderBrush="{Binding CardBorder}" BorderThickness="1" CornerRadius="6" Padding="8,8,4,8">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding FilteredFunctions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource SensorRowCard}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <!-- Col 0: Styled CheckBox -->
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <!-- Col 1: Sensor Display Name & Description -->
+                                                    <ColumnDefinition Width="*"/>
+                                                    <!-- Col 2: Permitted / Disabled Status Badge -->
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <!-- Col 3: Category Badge -->
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Styled CheckBox -->
+                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsEnabled, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" Cursor="Hand"/>
+
+                                                <!-- Sensor Display Name & Description -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{Binding DataContext.TextMain, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                                    <TextBlock Text="{Binding Description}" FontSize="10" Foreground="{Binding DataContext.TextMuted, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,2,0,0"/>
+                                                </StackPanel>
+
+                                                <!-- Permitted / Disabled Status Pill Badge -->
+                                                <Border Grid.Column="2" Background="{Binding StatusBadgeBg}" BorderBrush="{Binding StatusBadgeBorder}" BorderThickness="1" CornerRadius="10" Padding="8,2" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding StatusDisplay}" FontSize="9.5" FontWeight="Bold" Foreground="{Binding StatusBadgeFg}" FontFamily="Consolas"/>
+                                                </Border>
+
+                                                <!-- Category Pill Badge -->
+                                                <Border Grid.Column="3" Background="{Binding CategoryBadgeBg}" BorderThickness="0" CornerRadius="10" Padding="8,2" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Category}" FontSize="9.5" FontWeight="SemiBold" Foreground="{Binding CategoryBadgeFg}"/>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Row 3: Save Governance Button -->
+                    <Button Grid.Row="3" Height="38" Margin="0,14,0,0" Style="{StaticResource BtnPrimary}" Click="OnSaveAndApply_Click" HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="💾" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Save &amp; Apply Sensor Governance (Persist to agent_config.db)" FontWeight="Bold" FontSize="11.5" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- ============================================================== -->
+            <!-- RIGHT COLUMN: WORKSTATION CONFIG & LIVE TELEMETRY FEED         -->
+            <!-- ============================================================== -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <!-- Row 0: Workstation & Gateway Profile Card -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Row 1: Live Activity Feed Card -->
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- CARD 1: IDENTITY & GATEWAY SETTINGS -->
+                <Border Grid.Row="0" Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <!-- Header -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
+                            <TextBlock Text="🖥 Workstation Identity &amp; SCADA Gateway" FontWeight="Bold" FontSize="13.5" Foreground="{Binding TextMain}"/>
+                        </StackPanel>
+
+                        <!-- Hostname & Station ID Grid -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Workstation Hostname (Local Machine)" FontSize="10.5" FontWeight="SemiBold" Foreground="{Binding TextMuted}" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource FluentTextBox}" Text="{Binding Settings.NodeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" FontWeight="Bold" Foreground="#0078d4" IsReadOnly="True" Background="#f8fafc"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Line Station Identifier (Node ID)" FontSize="10.5" FontWeight="SemiBold" Foreground="{Binding TextMuted}" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource FluentTextBox}" Text="{Binding Settings.LineStationId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Station Friendly Name -->
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="Station Friendly Name / Operation Subtitle (SCADA Display)" FontSize="10.5" FontWeight="SemiBold" Foreground="{Binding TextMuted}" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource FluentTextBox}" Text="{Binding Settings.StationFriendlyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <!-- Server Endpoint & Interval -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Central SCADA Dashboard Endpoint (URL)" FontSize="10.5" FontWeight="SemiBold" Foreground="{Binding TextMuted}" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource FluentTextBox}" Text="{Binding Settings.ServerUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" FontWeight="Bold"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Interval (Seconds)" FontSize="10.5" FontWeight="SemiBold" Foreground="{Binding TextMuted}" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource FluentTextBox}" Text="{Binding Settings.PollingIntervalSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Options & Save Buttons -->
+                        <Grid Margin="0,4,0,0">
+                            <CheckBox IsChecked="{Binding Settings.MinimizeToTray, Mode=TwoWay}" Content="Minimize to Windows System Tray on close (Run 24/7)" FontSize="11" Foreground="{Binding TextMuted}" VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="📡 Ping Link" Height="34" Margin="0,0,8,0" Style="{StaticResource BtnSecondary}" Click="OnTestLink_Click" ToolTip="Test SCADA Host Connectivity"/>
+                                <Button Content="Save Settings" Height="34" Style="{StaticResource BtnPrimary}" Click="OnSaveAndApply_Click" ToolTip="Save Identity &amp; Gateway Settings"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- CARD 2: LIVE TRANSMISSION ACTIVITY FEED -->
+                <Border Grid.Row="1" Style="{StaticResource FluentCard}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Header & Live Stream Counters -->
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="📊 Live Transmission Activity Feed" FontWeight="Bold" FontSize="13.5" Foreground="{Binding TextMain}"/>
+                                <Border Background="#eff6ff" BorderBrush="#bfdbfe" BorderThickness="1" CornerRadius="10" Padding="8,2" Margin="10,0,0,0">
+                                    <TextBlock Text="{Binding PacketsCount}" FontSize="9.5" FontFamily="Consolas" FontWeight="Bold" Foreground="#1d4ed8"/>
+                                </Border>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <Border Background="#ecfdf5" BorderBrush="#a7f3d0" BorderThickness="1" CornerRadius="10" Padding="8,2" Margin="0,0,8,0">
+                                    <TextBlock Text="{Binding LastLatency}" FontSize="9.5" FontFamily="Consolas" Foreground="#047857" FontWeight="Bold"/>
+                                </Border>
+                                <Button Content="🗑 Clear" Height="24" Padding="10,2" FontSize="10" Style="{StaticResource BtnSecondary}" Click="OnClearLog_Click" ToolTip="Clear Activity Feed"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Sleek Dark Modern Console Output -->
+                        <Border Grid.Row="1" Background="#0f172a" BorderBrush="{Binding CardBorder}" BorderThickness="1" CornerRadius="6" Padding="2">
+                            <TextBox x:Name="TxtLog" Text="{Binding LogText, Mode=OneWay}" IsReadOnly="True"
+                                     Background="Transparent" Foreground="#e2e8f0" BorderThickness="0"
+                                     FontFamily="Cascadia Code, Consolas" FontSize="10.5" Padding="12"
+                                     VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
+                                     TextChanged="OnLogTextChanged"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ============================================================== -->
+        <!-- ROW 2: CLEAN MINIMAL STATUS BAR                                -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="2" Background="{Binding HeaderBg}" BorderBrush="{Binding HeaderBorder}" BorderThickness="0,1,0,0" Padding="24,8">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="7" Height="7" Fill="#10b981" Margin="0,0,7,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="PlantOps™ Line Node Agent v2.4 (.NET 8 WPF)" FontSize="10" Foreground="{Binding TextMuted}"/>
+                    <TextBlock Text="•" Foreground="{Binding TextMuted}" Margin="8,0"/>
+                    <TextBlock Text="{Binding Settings.NodeName}" FontSize="10" Foreground="{Binding TextMuted}" FontFamily="Consolas"/>
+                    <TextBlock Text="•" Foreground="{Binding TextMuted}" Margin="8,0"/>
+                    <TextBlock Text="{Binding Settings.LineStationId}" FontSize="10" Foreground="{Binding TextMuted}" FontFamily="Consolas" FontWeight="Bold"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="21 CFR Part 11 Certified • ISA-101 High Performance HMI" FontSize="10" Foreground="{Binding TextMuted}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

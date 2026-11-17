@@ -1,0 +1,322 @@
+/* ==========================================================================
+   PLANTOPS™ ENTERPRISE SCADA - OFFICIAL CORPORATE INDUSTRIAL STYLESHEET
+   Clean Enterprise Theme (Dual Light / Dark Support)
+   Compliant with ISA-101 High Performance HMI & 21 CFR Part 11 Guidelines
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* LIGHT THEME (Default: Pristine Enterprise Corporate) */
+  --bg-canvas: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-header: #f8fafc;
+  --bg-card-inset: #f8fafc;
+  
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-strong: #94a3b8;
+
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+
+  /* ISA-101 Status Colors (Light Mode) */
+  --status-nominal: #16a34a;
+  --status-nominal-bg: #dcfce7;
+  --status-nominal-border: #86efac;
+  --status-nominal-text: #14532d;
+
+  --status-warning: #d97706;
+  --status-warning-bg: #fef3c7;
+  --status-warning-border: #fcd34d;
+  --status-warning-text: #78350f;
+
+  --status-critical: #dc2626;
+  --status-critical-bg: #fee2e2;
+  --status-critical-border: #fca5a5;
+  --status-critical-text: #7f1d1d;
+
+  --status-offline: #64748b;
+  --status-offline-bg: #f1f5f9;
+  --status-offline-border: #cbd5e1;
+  --status-offline-text: #334155;
+
+  --track-bg: #e2e8f0;
+  --header-bg: #0f172a;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+}
+
+/* DARK THEME OVERRIDES */
+html.dark {
+  --bg-canvas: #090d16;
+  --bg-surface: #0f1624;
+  --bg-card: #131b2e;
+  --bg-card-header: #182239;
+  --bg-card-inset: #0b101c;
+  
+  --border-subtle: #1e2a42;
+  --border-medium: #2b3b5c;
+  --border-strong: #3b4f7a;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --status-nominal: #10b981;
+  --status-nominal-bg: rgba(16, 185, 129, 0.15);
+  --status-nominal-border: rgba(16, 185, 129, 0.4);
+  --status-nominal-text: #34d399;
+
+  --status-warning: #f59e0b;
+  --status-warning-bg: rgba(245, 158, 11, 0.15);
+  --status-warning-border: rgba(245, 158, 11, 0.4);
+  --status-warning-text: #fbbf24;
+
+  --status-critical: #ef4444;
+  --status-critical-bg: rgba(239, 68, 68, 0.18);
+  --status-critical-border: rgba(239, 68, 68, 0.5);
+  --status-critical-text: #f87171;
+
+  --status-offline: #64748b;
+  --status-offline-bg: rgba(100, 116, 139, 0.15);
+  --status-offline-border: rgba(100, 116, 139, 0.4);
+  --status-offline-text: #94a3b8;
+
+  --track-bg: #0b111e;
+  --header-bg: #0e1626;
+}
+
+/* Base Reset & Global Typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+header {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  user-select: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Precision Industrial Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Professional Faceplate Status Classes */
+.faceplate-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.faceplate-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+}
+
+.faceplate-nominal {
+  border-top: 4px solid var(--status-nominal) !important;
+}
+.faceplate-warning {
+  border-top: 4px solid var(--status-warning) !important;
+}
+.faceplate-critical {
+  border-top: 4px solid var(--status-critical) !important;
+}
+.faceplate-offline {
+  border-top: 4px solid var(--status-offline) !important;
+  opacity: 0.85;
+}
+
+/* Industrial Status Annunciator LED */
+.status-led {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-led-green {
+  background-color: var(--status-nominal);
+  box-shadow: 0 0 6px rgba(22, 163, 74, 0.6);
+}
+.status-led-amber {
+  background-color: var(--status-warning);
+  box-shadow: 0 0 6px rgba(217, 119, 6, 0.6);
+}
+.status-led-red {
+  background-color: var(--status-critical);
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.8);
+  animation: led-alert-pulse 1.2s infinite ease-in-out;
+}
+.status-led-gray {
+  background-color: var(--status-offline);
+  box-shadow: none;
+}
+
+@keyframes led-alert-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Precision Gauges & Progress Meters */
+.meter-track {
+  background-color: var(--track-bg);
+  height: 7px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+.meter-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.35s ease-out, background-color 0.25s ease;
+}
+
+/* Zebra ZT411 Industrial Status Pills */
+.zebra-status-ready {
+  background-color: var(--status-nominal-bg);
+  color: var(--status-nominal-text);
+  border: 1px solid var(--status-nominal-border);
+}
+.zebra-status-warning {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning-text);
+  border: 1px solid var(--status-warning-border);
+}
+.zebra-status-error {
+  background-color: var(--status-critical-bg);
+  color: var(--status-critical-text);
+  border: 1px solid var(--status-critical-border);
+}
+
+/* Certified Audit Log Table Styling */
+.scada-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.scada-table th {
+  background-color: var(--bg-card-header);
+  border-bottom: 1px solid var(--border-medium);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 11px 14px;
+}
+.scada-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-main);
+}
+.scada-table tbody tr {
+  background-color: var(--bg-surface);
+  transition: background-color 0.15s ease;
+}
+.scada-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+html.dark .scada-table tbody tr:hover {
+  background-color: rgba(30, 42, 66, 0.4);
+}
+.scada-table tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+html.dark .scada-table tbody tr:nth-child(even) {
+  background-color: rgba(15, 22, 36, 0.4);
+}
+
+/* Top Warning Stoppage Banner */
+.line-alarm-banner {
+  background: linear-gradient(90deg, #991b1b 0%, #dc2626 50%, #991b1b 100%);
+  border: 1px solid #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.25);
+}
+
+/* Buttons */
+.btn-enterprise-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: 1px solid #1d4ed8;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+.btn-enterprise-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1e40af;
+}
+
+.btn-enterprise-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-medium);
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+.btn-enterprise-secondary:hover {
+  background-color: var(--border-subtle);
+  color: var(--text-main);
+}
+
+/* Quick Audit Log Section Highlight */
+.audit-highlight {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.8) !important;
+  transition: box-shadow 0.3s ease-in-out !important;
+}
+
+/* System Connection Status Pill Enforcement */
+#system-connection-pill {
+  white-space: nowrap !important;
+  max-height: 32px !important;
+  overflow: hidden !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+}

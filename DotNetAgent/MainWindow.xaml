@@ -1,0 +1,460 @@
+<Window x:Class="DotNetAgent.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PlantOps™ Line Node Agent — Workstation Telemetry &amp; Data Permission Controller"
+        Height="760" Width="1020"
+        MinHeight="650" MinWidth="880"
+        WindowStartupLocation="CenterScreen"
+        Background="#0b1120"
+        Foreground="#f8fafc"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <!-- 2D Industrial Card Style -->
+        <Style x:Key="IndustrialCard" TargetType="Border">
+            <Setter Property="Background" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#1e293b"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="2"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <!-- 2D Button Style -->
+        <Style x:Key="FlatBtn" TargetType="Button">
+            <Setter Property="Background" Value="#1e293b"/>
+            <Setter Property="Foreground" Value="#f8fafc"/>
+            <Setter Property="BorderBrush" Value="#334155"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="2"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Permission CheckBox Style -->
+        <Style x:Key="PermCheck" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#e2e8f0"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,3,0,3"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 0: Header -->
+            <RowDefinition Height="Auto"/>
+            <!-- 1: Body (Left Config/Permissions, Right Live Preview/Log) -->
+            <RowDefinition Height="*"/>
+            <!-- 2: Bottom Status Strip -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ============================================================== -->
+        <!-- ROW 0: 2D FLAT INDUSTRIAL HEADER                               -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="0" Background="#0f172a" BorderBrush="#1e293b" BorderThickness="0,0,0,1" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: App Branding -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="34" Height="34" Background="#1e293b" CornerRadius="2" Margin="0,0,12,0" BorderBrush="#334155" BorderThickness="1">
+                        <Viewbox Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,6V11.26L15.3,13.74L16.05,12.44L12.5,10.39V6H11Z" Fill="#0284c7"/>
+                        </Viewbox>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="PLANTOPS" FontWeight="Black" FontSize="15" Foreground="White"/>
+                            <TextBlock Text="LINE NODE AGENT" FontWeight="Bold" FontSize="15" Foreground="#0284c7" Margin="6,0,0,0"/>
+                            <Border Background="#1e293b" CornerRadius="2" Padding="6,1" Margin="8,0,0,0">
+                                <TextBlock Text="C# .NET 8" FontSize="9" FontWeight="Black" Foreground="#38bdf8" FontFamily="Consolas"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="Workstation Telemetry Ingestion &amp; Data Governance Permission Controller" FontSize="10" Foreground="#94a3b8" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Center: Target Server Pill -->
+                <Border Grid.Column="1" HorizontalAlignment="Center" Background="#111827" CornerRadius="2" BorderBrush="#1e293b" BorderThickness="1" Padding="12,5" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Rectangle x:Name="RectStatusLed" Width="6" Height="6" Fill="#eab308" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtStreamStatusBadge" Text="STREAMING IDLE" FontWeight="Black" FontSize="10" Foreground="#eab308" Margin="0,0,8,0" FontFamily="Consolas"/>
+                        <TextBlock Text="|" Foreground="#475569" Margin="0,0,8,0"/>
+                        <TextBlock Text="TARGET SCADA:" FontSize="10" Foreground="#94a3b8" Margin="0,0,5,0" FontFamily="Consolas"/>
+                        <TextBlock x:Name="TxtHeaderUrl" Text="http://127.0.0.1:8090/api/telemetry" FontSize="10" FontWeight="Bold" Foreground="#38bdf8" FontFamily="Consolas"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Right: Action Buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="BtnToggleStream" Click="OnToggleStream_Click" Width="140" Height="32" Background="#16a34a" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Viewbox Width="11" Height="11" Margin="0,0,6,0" VerticalAlignment="Center">
+                                <Path x:Name="PathStreamIcon" Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="White"/>
+                            </Viewbox>
+                            <TextBlock x:Name="TxtStreamBtnLabel" Text="Start Stream"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ============================================================== -->
+        <!-- ROW 1: MAIN BODY (TWO COLUMNS)                                 -->
+        <!-- ============================================================== -->
+        <Grid Grid.Row="1" Margin="14">
+            <Grid.ColumnDefinitions>
+                <!-- Left: Configuration & Granular Permissions -->
+                <ColumnDefinition Width="480"/>
+                <!-- Right: Live Node Readouts & Outgoing JSON Preview -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT COLUMN: CONTROLS & PERMISSION MATRIX -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
+                <StackPanel>
+
+                    <!-- CARD 1: SCADA CONNECTION & NODE IDENTITY -->
+                    <Border Style="{StaticResource IndustrialCard}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Rectangle Width="8" Height="8" Fill="#0284c7" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="SCADA SERVER &amp; NODE IDENTITY" FontWeight="Bold" FontSize="11" FontFamily="Consolas" Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- SCADA Host & Port -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                    <TextBlock Text="SCADA HOST IP:" FontSize="9" FontWeight="Bold" Foreground="#94a3b8" FontFamily="Consolas"/>
+                                    <TextBox x:Name="TxtServerIp" Text="127.0.0.1" Height="28" Margin="0,3,0,0" Background="#0f172a" Foreground="#38bdf8" BorderBrush="#334155" BorderThickness="1" Padding="6,2" FontFamily="Consolas" FontWeight="Bold" TextChanged="OnConfigChanged"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                                    <TextBlock Text="TCP PORT:" FontSize="9" FontWeight="Bold" Foreground="#94a3b8" FontFamily="Consolas"/>
+                                    <TextBox x:Name="TxtServerPort" Text="8090" Height="28" Margin="0,3,0,0" Background="#0f172a" Foreground="White" BorderBrush="#334155" BorderThickness="1" Padding="6,2" FontFamily="Consolas" FontWeight="Bold" TextChanged="OnConfigChanged"/>
+                                </StackPanel>
+                                <Button Grid.Column="2" Content="Test Link" Width="75" Height="28" Margin="0,15,0,0" Style="{StaticResource FlatBtn}" Click="OnTestLink_Click"/>
+                            </Grid>
+
+                            <!-- Station Preset Selector -->
+                            <TextBlock Text="WORKSTATION ID PRESET:" FontSize="9" FontWeight="Bold" Foreground="#94a3b8" FontFamily="Consolas"/>
+                            <ComboBox x:Name="CmbStationPreset" Height="28" Margin="0,3,0,8" Background="#0f172a" Foreground="#0f172a" SelectionChanged="OnStationPresetChanged">
+                                <ComboBoxItem Content="ST-01: Chassis Press &amp; Base Assembly (LINE1_STATION_01)"/>
+                                <ComboBoxItem Content="ST-02: Evaporator Coil &amp; Copper Brazing (LINE1_STATION_02)"/>
+                                <ComboBoxItem Content="ST-03: Compressor &amp; Motor Mounting (LINE1_STATION_03)"/>
+                                <ComboBoxItem Content="ST-04: Electrical &amp; Inverter PCB Wiring (LINE1_STATION_04)"/>
+                                <ComboBoxItem Content="ST-05: Vacuum Decay &amp; R32 Charge (LINE1_STATION_05)"/>
+                                <ComboBoxItem Content="ST-06: Final QA Run-Test &amp; Zebra ZT411 (LINE1_STATION_06)" IsSelected="True"/>
+                                <ComboBoxItem Content="Custom Node Identifier..."/>
+                            </ComboBox>
+
+                            <!-- Station ID & Name -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="160"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                    <TextBlock Text="STATION ID:" FontSize="9" FontWeight="Bold" Foreground="#94a3b8" FontFamily="Consolas"/>
+                                    <TextBox x:Name="TxtStationId" Text="LINE1_STATION_06" Height="28" Margin="0,3,0,0" Background="#0f172a" Foreground="#38bdf8" BorderBrush="#334155" BorderThickness="1" Padding="6,2" FontFamily="Consolas" FontWeight="Bold" TextChanged="OnConfigChanged"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="STATION NAME:" FontSize="9" FontWeight="Bold" Foreground="#94a3b8" FontFamily="Consolas"/>
+                                    <TextBox x:Name="TxtStationName" Text="ST-06: Final QA Run-Test &amp; Zebra ZT411" Height="28" Margin="0,3,0,0" Background="#0f172a" Foreground="White" BorderBrush="#334155" BorderThickness="1" Padding="6,2" TextChanged="OnConfigChanged"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Sync Rate -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="HEARTBEAT BROADCAST INTERVAL:" FontSize="9" FontWeight="Bold" Foreground="#94a3b8" FontFamily="Consolas"/>
+                                    <ComboBox x:Name="CmbInterval" Height="26" Margin="0,3,0,0" Width="140" HorizontalAlignment="Left" SelectionChanged="OnIntervalChanged">
+                                        <ComboBoxItem Content="1.0 Second (Real-Time)"/>
+                                        <ComboBoxItem Content="2.0 Seconds (Fast)"/>
+                                        <ComboBoxItem Content="3.0 Seconds (Default)" IsSelected="True"/>
+                                        <ComboBoxItem Content="5.0 Seconds (Balanced)"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="💾 Save Defaults" Height="28" Width="120" VerticalAlignment="Bottom" Style="{StaticResource FlatBtn}" Click="OnSaveConfig_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- CARD 2: TELEMETRY DATA PERMISSION GATEWAY (USER CORE REQUIREMENT!) -->
+                    <Border Style="{StaticResource IndustrialCard}" BorderBrush="#0284c7" BorderThickness="1.5">
+                        <StackPanel>
+                            <!-- Section Title -->
+                            <Grid Margin="0,0,0,8">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Viewbox Width="12" Height="12" Margin="0,0,6,0" VerticalAlignment="Center">
+                                        <Path Data="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.89,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" Fill="#38bdf8"/>
+                                    </Viewbox>
+                                    <TextBlock Text="DATA BROADCAST PERMISSION CONTROLLER" FontWeight="Black" FontSize="11" FontFamily="Consolas" Foreground="#38bdf8"/>
+                                </StackPanel>
+                                <Border HorizontalAlignment="Right" Background="#0369a1" CornerRadius="2" Padding="6,1">
+                                    <TextBlock Text="NODE GOVERNANCE" FontSize="8" FontWeight="Bold" Foreground="White"/>
+                                </Border>
+                            </Grid>
+
+                            <TextBlock Text="Choose which metrics this workstation is permitted to send and display on the SCADA dashboard:"
+                                       FontSize="10" Foreground="#94a3b8" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                            <!-- Permission 1: CPU -->
+                            <Border Background="#0f172a" CornerRadius="2" Padding="8,6" Margin="0,0,0,6" BorderBrush="#1e293b" BorderThickness="1">
+                                <Grid>
+                                    <CheckBox x:Name="ChkPermCpu" Style="{StaticResource PermCheck}" IsChecked="True" Checked="OnPermissionChanged" Unchecked="OnPermissionChanged">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Allow CPU Core Workload (%)" FontWeight="Bold"/>
+                                            <TextBlock Text="— Real-time processor load telemetry" FontSize="10" Foreground="#64748b" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Permission 2: RAM -->
+                            <Border Background="#0f172a" CornerRadius="2" Padding="8,6" Margin="0,0,0,6" BorderBrush="#1e293b" BorderThickness="1">
+                                <Grid>
+                                    <CheckBox x:Name="ChkPermRam" Style="{StaticResource PermCheck}" IsChecked="True" Checked="OnPermissionChanged" Unchecked="OnPermissionChanged">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Allow RAM Memory Commit (%)" FontWeight="Bold"/>
+                                            <TextBlock Text="— Physical RAM load, used &amp; free GB" FontSize="10" Foreground="#64748b" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Permission 3: Disk -->
+                            <Border Background="#0f172a" CornerRadius="2" Padding="8,6" Margin="0,0,0,6" BorderBrush="#1e293b" BorderThickness="1">
+                                <Grid>
+                                    <CheckBox x:Name="ChkPermDisk" Style="{StaticResource PermCheck}" IsChecked="True" Checked="OnPermissionChanged" Unchecked="OnPermissionChanged">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Allow NVMe / C:\ Storage Usage (%)" FontWeight="Bold"/>
+                                            <TextBlock Text="— Primary drive space &amp; percent" FontSize="10" Foreground="#64748b" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Permission 4: Uptime -->
+                            <Border Background="#0f172a" CornerRadius="2" Padding="8,6" Margin="0,0,0,6" BorderBrush="#1e293b" BorderThickness="1">
+                                <Grid>
+                                    <CheckBox x:Name="ChkPermUptime" Style="{StaticResource PermCheck}" IsChecked="True" Checked="OnPermissionChanged" Unchecked="OnPermissionChanged">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Allow System Uptime Counter" FontWeight="Bold"/>
+                                            <TextBlock Text="— Workstation operational running time" FontSize="10" Foreground="#64748b" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Permission 5: Network IP -->
+                            <Border Background="#0f172a" CornerRadius="2" Padding="8,6" Margin="0,0,0,6" BorderBrush="#1e293b" BorderThickness="1">
+                                <Grid>
+                                    <CheckBox x:Name="ChkPermNetwork" Style="{StaticResource PermCheck}" IsChecked="True" Checked="OnPermissionChanged" Unchecked="OnPermissionChanged">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Allow Local IP &amp; Network Adapter Info" FontWeight="Bold"/>
+                                            <TextBlock Text="— IPv4, WiFi/LAN mode &amp; Ping Latency" FontSize="10" Foreground="#64748b" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Permission 6: Zebra Printer -->
+                            <Border Background="#0f172a" CornerRadius="2" Padding="8,6" Margin="0,0,0,10" BorderBrush="#1e293b" BorderThickness="1">
+                                <Grid>
+                                    <CheckBox x:Name="ChkPermZebra" Style="{StaticResource PermCheck}" IsChecked="True" Checked="OnPermissionChanged" Unchecked="OnPermissionChanged">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Allow Zebra ZT411 Printer Monitoring" FontWeight="Bold"/>
+                                            <TextBlock Text="— Thermal head status &amp; print queue" FontSize="10" Foreground="#64748b" Margin="6,0,0,0"/>
+                                        </StackPanel>
+                                    </CheckBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Preset Buttons -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="Allow All" Width="85" Height="26" Margin="0,0,6,0" Style="{StaticResource FlatBtn}" Click="OnPresetAll_Click"/>
+                                <Button Content="Minimal" Width="85" Height="26" Margin="0,0,6,0" Style="{StaticResource FlatBtn}" Click="OnPresetMinimal_Click"/>
+                                <Button Content="Mask HW" Width="85" Height="26" Style="{StaticResource FlatBtn}" Click="OnPresetMaskHardware_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- RIGHT COLUMN: LIVE READOUTS, PAYLOAD PREVIEW & LOG -->
+            <Grid Grid.Column="1" Margin="8,0,0,0">
+                <Grid.RowDefinitions>
+                    <!-- 0: Live Readouts on this PC -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- 1: Live Outgoing JSON Payload Preview -->
+                    <RowDefinition Height="*"/>
+                    <!-- 2: Event Transmission Log -->
+                    <RowDefinition Height="160"/>
+                </Grid.RowDefinitions>
+
+                <!-- CARD 3: LIVE NODE HARDWARE READOUTS -->
+                <Border Grid.Row="0" Style="{StaticResource IndustrialCard}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,8">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="8" Height="8" Fill="#10b981" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="LOCAL PC HARDWARE STATUS (LIVE WIN32 SENSORS)" FontWeight="Bold" FontSize="11" FontFamily="Consolas" Foreground="White"/>
+                            </StackPanel>
+                            <TextBlock x:Name="TxtPermSummaryBadge" HorizontalAlignment="Right" Text="6/6 PERMITTED" FontSize="9" FontWeight="Bold" Foreground="#10b981" FontFamily="Consolas"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- CPU Live -->
+                            <Border Grid.Column="0" Background="#0f172a" CornerRadius="2" Padding="8" Margin="0,0,6,0" BorderBrush="#1e293b" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="CPU LOAD" FontSize="9" FontWeight="Bold" Foreground="#94a3b8"/>
+                                    <TextBlock x:Name="TxtLiveCpu" Text="24.5%" FontSize="16" FontWeight="Black" Foreground="#38bdf8" FontFamily="Consolas" Margin="0,3,0,0"/>
+                                    <TextBlock x:Name="TxtPermCpuStatus" Text="PERMITTED" FontSize="8" FontWeight="Bold" Foreground="#10b981"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- RAM Live -->
+                            <Border Grid.Column="1" Background="#0f172a" CornerRadius="2" Padding="8" Margin="0,0,6,0" BorderBrush="#1e293b" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="RAM USAGE" FontSize="9" FontWeight="Bold" Foreground="#94a3b8"/>
+                                    <TextBlock x:Name="TxtLiveRam" Text="45.0%" FontSize="16" FontWeight="Black" Foreground="#38bdf8" FontFamily="Consolas" Margin="0,3,0,0"/>
+                                    <TextBlock x:Name="TxtPermRamStatus" Text="PERMITTED" FontSize="8" FontWeight="Bold" Foreground="#10b981"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Disk Live -->
+                            <Border Grid.Column="2" Background="#0f172a" CornerRadius="2" Padding="8" Margin="0,0,6,0" BorderBrush="#1e293b" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="C:\ STORAGE" FontSize="9" FontWeight="Bold" Foreground="#94a3b8"/>
+                                    <TextBlock x:Name="TxtLiveDisk" Text="48.0%" FontSize="16" FontWeight="Black" Foreground="#38bdf8" FontFamily="Consolas" Margin="0,3,0,0"/>
+                                    <TextBlock x:Name="TxtPermDiskStatus" Text="PERMITTED" FontSize="8" FontWeight="Bold" Foreground="#10b981"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Zebra Live -->
+                            <Border Grid.Column="3" Background="#0f172a" CornerRadius="2" Padding="8" BorderBrush="#1e293b" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="ZEBRA ZT411" FontSize="9" FontWeight="Bold" Foreground="#94a3b8"/>
+                                    <TextBlock x:Name="TxtLiveZebra" Text="READY" FontSize="16" FontWeight="Black" Foreground="#10b981" FontFamily="Consolas" Margin="0,3,0,0"/>
+                                    <TextBlock x:Name="TxtPermZebraStatus" Text="PERMITTED" FontSize="8" FontWeight="Bold" Foreground="#10b981"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- CARD 4: OUTGOING JSON TELEMETRY PAYLOAD PREVIEW -->
+                <Border Grid.Row="1" Style="{StaticResource IndustrialCard}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="8" Height="8" Fill="#38bdf8" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="TRANSMITTED TELEMETRY PAYLOAD (DYNAMIC PERMISSIONS MASK)" FontWeight="Bold" FontSize="11" FontFamily="Consolas" Foreground="White"/>
+                            </StackPanel>
+                            <TextBlock Text="LIVE JSON STREAM PREVIEW" FontSize="9" FontWeight="Bold" Foreground="#64748b" HorizontalAlignment="Right" FontFamily="Consolas"/>
+                        </Grid>
+
+                        <TextBox Grid.Row="1" x:Name="TxtJsonPreview" IsReadOnly="True" 
+                                 Background="#0f172a" Foreground="#86efac" BorderBrush="#1e293b" BorderThickness="1"
+                                 FontFamily="Consolas" FontSize="10" Padding="10" 
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                 TextWrapping="NoWrap"/>
+                    </Grid>
+                </Border>
+
+                <!-- CARD 5: LIVE EVENT DISPATCH LOG -->
+                <Border Grid.Row="2" Style="{StaticResource IndustrialCard}" Margin="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="8" Height="8" Fill="#a855f7" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="HTTP DISPATCH ACTIVITY FEED" FontWeight="Bold" FontSize="11" FontFamily="Consolas" Foreground="White"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock x:Name="TxtPacketsCount" Text="Packets: 0" FontSize="10" FontFamily="Consolas" Foreground="#94a3b8" Margin="0,0,10,0"/>
+                                <TextBlock x:Name="TxtLastPing" Text="Latency: --" FontSize="10" FontFamily="Consolas" Foreground="#a855f7"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBox Grid.Row="1" x:Name="TxtActivityLog" IsReadOnly="True"
+                                 Background="#0f172a" Foreground="#cbd5e1" BorderBrush="#1e293b" BorderThickness="1"
+                                 FontFamily="Consolas" FontSize="10" Padding="6"
+                                 VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ============================================================== -->
+        <!-- ROW 2: BOTTOM SCADA COMPLIANCE STRIP                           -->
+        <!-- ============================================================== -->
+        <Border Grid.Row="2" Background="#0f172a" BorderBrush="#1e293b" BorderThickness="0,1,0,0" Padding="16,6">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Rectangle Width="6" Height="6" Fill="#10b981" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="PlantOps™ Industrial Workstation Telemetry Client" FontWeight="Bold" FontSize="10" Foreground="#10b981"/>
+                    <TextBlock Text="|" Foreground="#475569" Margin="8,0"/>
+                    <TextBlock x:Name="TxtFooterHostname" Text="HOST: LOCALPC" FontSize="10" Foreground="#94a3b8" FontFamily="Consolas"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="DATA GOVERNANCE: OPERATOR-CONTROLLED" FontSize="10" FontFamily="Consolas" Foreground="#38bdf8" FontWeight="Bold"/>
+                    <TextBlock Text="|" Foreground="#475569" Margin="8,0"/>
+                    <TextBlock Text="21 CFR PART 11 COMPLIANT" FontSize="10" FontWeight="Bold" Foreground="#94a3b8"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
